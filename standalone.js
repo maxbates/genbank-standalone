@@ -20,7 +20,7 @@ var cp = require('child_process');
 var url = require('url');
 var path = require('path');
 var fs = require('fs');
-var port = process.argv[2] || 8888;
+var port = process.env.PORT || process.argv[2] || 8080;
 
 var app = express();
 
