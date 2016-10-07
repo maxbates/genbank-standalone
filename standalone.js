@@ -14,49 +14,28 @@
  limitations under the License.
  */
 
+//standalone, node v4 compatible server, for running at heroku
+
 var express = require('express');
 var bodyParser = require('body-parser');
-var cp = require('child_process');
-var url = require('url');
-var path = require('path');
-var fs = require('fs');
 var port = process.env.PORT || process.argv[2] || 8080;
+
+var handleConversion = require('./handleConversion');
 
 var app = express();
 
 app.post('*', bodyParser.json(), bodyParser.text(), function handlePost(req, res, next) {
   const input = '/tmp/' + Math.floor(Math.random() * 1000000000);
   const output = '/tmp/' + Math.floor(Math.random() * 1000000000);
-  const body = req.body;
+  const content = req.body;
+  const type = req.path;
 
-  fs.writeFile(input, body, 'utf8', function afterWrite(err) {
+  handleConversion(type, content, input, output, function (err, result) {
     if (err) {
-      console.log('ERROR WRITING');
-      console.log(err);
-      return res.status(500).send();
+      return res.status(500).send(err);
     }
 
-    const convertFilePath = __dirname + '/convert.py';
-    const type = req.path;
-    const conversion = type === '/import' ? 'from_genbank' : 'to_genbank';
-    const command = `python ${convertFilePath} ${conversion} ${input} ${output}`;
-
-    cp.exec(command, function runPython(err, stdout) {
-      if (err) {
-        console.log('ERROR IN SCRIPT');
-        console.log(err);
-        return res.status(500).send();
-      }
-
-      fs.readFile(output, 'utf8', function readingFile(err, contents) {
-        if (err) {
-          console.log('ERROR READING');
-          console.log(err);
-          return res.status(500).send();
-        }
-        res.send(contents);
-      });
-    });
+    res.send(result);
   });
 });
 

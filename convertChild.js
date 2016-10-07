@@ -13,23 +13,20 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
+
+//this script expects to be a forked process. It works with child_process.fork('convertChild.js')
+
 const cp = require('child_process');
+var execPython = require('./execPython');
 
 console.log('Initiated genbank converter slave');
 
 process.on('message', (message) => {
-  //whether we are importing or exporting
-  const conversion = message.type === 'import' ? 'from_genbank' : 'to_genbank';
-
-  const command = `python convert.py ${conversion} ${message.input} ${message.output}`;
-
-  cp.exec(command, function runPython(err, stdout) {
+  execPython(message.type, message.input, message.output, function afterExec(err, result) {
     if (err) {
-      console.log('ERROR IN CHILD PROCESS');
-      console.log(err);
-      return process.send({ id: message.id, success: false, error: err, result: stdout });
+      return process.send({ id: message.id, success: false, error: err, result: result });
     }
 
-    process.send({ id: message.id, success: true, result: stdout });
+    process.send({ id: message.id, success: true, result: result });
   });
 });

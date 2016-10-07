@@ -7,7 +7,8 @@
     "router": "index.js"
   },
   "scripts": {
-    "start": "node standalone.js"
+    "start": "node standalone.js",
+    "bundle": "npm install && ./zipFolder.sh"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
