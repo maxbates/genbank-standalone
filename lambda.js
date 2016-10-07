@@ -15,7 +15,7 @@
  */
 
 //for running as an AWS lambda
-var handleConversion = require('/handleConversion');
+var handleConversion = require('./handleConversion');
 
 exports.handler = (event, context, callback) => {
   if (!event.type) {
