@@ -4,32 +4,14 @@ Uses BioPython to convert, import, and export Genkbank files into Genetic Constr
 
 ## REST API
 
-Root of API is:
-
+Call either:
 ```
-/extensions/api/genbank/
-```
-
-### Routes
-
-##### Conversion
-
-```
-/extensions/api/genbank/import/convert
+/import
+/export
 ```
 
-##### Import
+With input file content on the body
 
-Either create a new project (specify `projectId`), or add to the current project (omit `projectId`)
+Where `import` expects a genbank file on the body and content-type of `text/plain`, and returns a constructor block rollup
 
-```
-/extensions/api/genbank/import/:projectId?
-```
-
-##### Export
-
-Export a project,` by `projectId` or specify a construct (by `constructId) within a project.
-
-```
-/extensions/api/genbank/export/:projectId/:constructId?
-```
+Where `export` expects a Constructor block rollup on the body and content-type of `application/json`, and returns a genbank file
