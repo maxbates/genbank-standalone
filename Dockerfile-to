@@ -1,0 +1,2 @@
+FROM python:2-onbuild
+CMD [ "python", "./convert.py", "to_genbank", "/mnt/input.json", "/mnt/output.gb" ]
